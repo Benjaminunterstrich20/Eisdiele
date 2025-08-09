@@ -1,64 +1,18 @@
-
 <!DOCTYPE html>
 <html lang="de">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Eis POS mit Warenkorb & Waffel/Becher Auswahl</title>
+<title>Eis POS Bestellsystem</title>
 <style>
-  body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    max-width: 480px;
-    margin: 20px auto;
-    background: #f0f8ff;
-    color: #333;
-  }
-  h1 {
-    text-align: center;
-    color: #0a47a1;
-  }
-  .section {
-    background: white;
-    padding: 15px;
-    margin-bottom: 20px;
-    border-radius: 10px;
-    box-shadow: 0 0 8px rgba(0,0,0,0.1);
-  }
-  label {
-    display: block;
-    margin-bottom: 8px;
-    font-weight: 600;
-  }
-  select, input[type="checkbox"], input[type="radio"] {
-    margin-right: 8px;
-  }
-  button {
-    background: #0a47a1;
-    color: white;
-    border: none;
-    padding: 12px 20px;
-    border-radius: 8px;
-    font-size: 1.1em;
-    cursor: pointer;
-    width: 100%;
-    margin-top: 10px;
-  }
-  button:hover {
-    background: #063a7a;
-  }
-  #orderSummary, #cart {
-    white-space: pre-line;
-    font-weight: 600;
-    padding: 10px;
-    border: 2px solid #0a47a1;
-    border-radius: 10px;
-    background: #dbe9ff;
-    min-height: 60px;
-  }
-  #cart {
-    max-height: 200px;
-    overflow-y: auto;
-  }
+  body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 480px; margin: 20px auto; background: #f0f8ff; color: #333; }
+  h1 { text-align: center; color: #0a47a1; }
+  .section { background: white; padding: 15px; margin-bottom: 20px; border-radius: 10px; box-shadow: 0 0 8px rgba(0,0,0,0.1); }
+  label { display: block; margin-bottom: 8px; font-weight: 600; }
+  select, input[type="checkbox"], input[type="radio"] { margin-right: 8px; }
+  button { background: #0a47a1; color: white; border: none; padding: 12px 20px; border-radius: 8px; font-size: 1.1em; cursor: pointer; width: 100%; margin-top: 10px; }
+  button:hover { background: #063a7a; }
+  #orderSummary { white-space: pre-line; font-weight: 600; padding: 10px; border: 2px solid #0a47a1; border-radius: 10px; background: #dbe9ff; min-height: 60px; }
 </style>
 </head>
 <body>
@@ -91,53 +45,19 @@
   <label><input type="radio" name="container" value="Becher" id="becher" /> Becher</label>
 </div>
 
-<button id="addToCartBtn">In Warenkorb legen</button>
-
-<h2>Warenkorb (max. 5 Bestellungen, jede Sorte nur 1x)</h2>
-<div class="section" id="cart">Warenkorb ist leer</div>
-
-<button id="showOrderBtn">Bestellung anzeigen</button>
+<button id="orderBtn">Bestellen</button>
 
 <div class="section" id="orderSummary"></div>
 
 <script>
-  const maxItems = 5;
-  const cart = [];
+  const orderBtn = document.getElementById('orderBtn');
 
-  function updateCartDisplay() {
-    const cartDiv = document.getElementById('cart');
-    if (cart.length === 0) {
-      cartDiv.textContent = 'Warenkorb ist leer';
-      return;
-    }
-    let text = '';
-    cart.forEach((item, idx) => {
-      text += `${idx + 1}. Eis: ${item.flavor}`;
-      if (item.cream) text += `, mit Sahne`;
-      if (item.toppings.length > 0) text += `, Toppings: ${item.toppings.join(', ')}`;
-      text += `, Behälter: ${item.container}`;
-      text += '\n';
-    });
-    cartDiv.textContent = text.trim();
-  }
-
-  document.getElementById('addToCartBtn').addEventListener('click', () => {
+  orderBtn.addEventListener('click', () => {
     const flavor = document.getElementById('flavor').value;
     if (!flavor) {
       alert('Bitte eine Eissorte auswählen!');
       return;
     }
-
-    if (cart.find(item => item.flavor === flavor)) {
-      alert('Diese Eissorte ist bereits im Warenkorb!');
-      return;
-    }
-
-    if (cart.length >= maxItems) {
-      alert('Maximal 5 Bestellungen im Warenkorb!');
-      return;
-    }
-
     const cream = document.getElementById('cream').checked;
     const kirschen = document.getElementById('kirschen').checked;
 
@@ -151,36 +71,36 @@
     }
     const container = containerRadio.value;
 
-    cart.push({ flavor, cream, toppings, container });
+    let orderText = `Eis: ${flavor}`;
+    if (cream) orderText += `, mit Sahne`;
+    if (toppings.length > 0) orderText += `, Toppings: ${toppings.join(', ')}`;
+    orderText += `, Behälter: ${container}`;
 
-    updateCartDisplay();
+    document.getElementById('orderSummary').textContent = `Deine Bestellung:\n${orderText}`;
 
-    // Reset Auswahl
-    document.getElementById('flavor').value = '';
-    document.getElementById('cream').checked = false;
-    document.getElementById('kirschen').checked = false;
-    document.querySelectorAll('input[name="container"]').forEach(radio => radio.checked = false);
-
-    document.getElementById('orderSummary').textContent = '';
-  });
-
-  document.getElementById('showOrderBtn').addEventListener('click', () => {
-    if (cart.length === 0) {
-      alert('Der Warenkorb ist leer!');
-      return;
-    }
-    let orderText = 'Deine komplette Bestellung:\n\n';
-    cart.forEach((item, idx) => {
-      orderText += `${idx + 1}. Eis: ${item.flavor}`;
-      if (item.cream) orderText += `, mit Sahne`;
-      if (item.toppings.length > 0) orderText += `, Toppings: ${item.toppings.join(', ')}`;
-      orderText += `, Behälter: ${item.container}`;
-      orderText += '\n';
+    fetch('https://kassenhost.onrender.com/bestellung', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ order: orderText, timestamp: new Date().toISOString() })
+    })
+    .then(response => {
+      if (response.ok) {
+        alert('Bestellung wurde gesendet!');
+        // Reset Form
+        document.getElementById('flavor').value = '';
+        document.getElementById('cream').checked = false;
+        document.getElementById('kirschen').checked = false;
+        document.querySelectorAll('input[name="container"]').forEach(r => r.checked = false);
+        document.getElementById('orderSummary').textContent = '';
+      } else {
+        alert('Fehler beim Senden der Bestellung!');
+      }
+    })
+    .catch(err => {
+      console.error('Fehler:', err);
+      alert('Netzwerkfehler beim Senden!');
     });
-    document.getElementById('orderSummary').textContent = orderText.trim();
   });
-
-  updateCartDisplay();
 </script>
 
 </body>
