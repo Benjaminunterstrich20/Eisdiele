@@ -1,34 +1,111 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Export: zuudfuikn.sb3 (TurboWarp Preview)</title>
-  <style>
-    html,body,iframe { height:100%; margin:0; padding:0; }
-    iframe { width:100%; border:0; }
-    .note { 
-      position: absolute; 
-      top:8px; 
-      left:8px; 
-      z-index:999; 
-      background:rgba(255,255,255,0.9); 
-      padding:6px 8px; 
-      border-radius:6px; 
-      font-family:system-ui,Segoe UI,Helvetica,Arial; 
-      font-size:13px; 
-    }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Eis POS Bestellsystem</title>
+<style>
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    max-width: 480px;
+    margin: 20px auto;
+    background: #f0f8ff;
+    color: #333;
+  }
+  h1 {
+    text-align: center;
+    color: #0a47a1;
+  }
+  .section {
+    background: white;
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 8px rgba(0,0,0,0.1);
+  }
+  label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+  }
+  select, input[type="checkbox"] {
+    margin-right: 8px;
+  }
+  button {
+    background: #0a47a1;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-size: 1.1em;
+    cursor: pointer;
+    width: 100%;
+  }
+  button:hover {
+    background: #063a7a;
+  }
+  #orderSummary {
+    white-space: pre-line;
+    font-weight: 600;
+    padding: 10px;
+    border: 2px solid #0a47a1;
+    border-radius: 10px;
+    background: #dbe9ff;
+    min-height: 60px;
+  }
+</style>
 </head>
 <body>
-  <div class="note">
-    Project embedded via TurboWarp preview. 
-    If it doesn't load, open directly: 
-    <a href="https://turbowarp.org/preview?projecturl=data:application/json;base64,{{HIER_STEHT_DEIN_BASE64_PROJECT_JSON}}" 
-       target="_blank" rel="noopener">
-      Preview auf turbobwarp.org
-    </a>
-  </div>
-  <iframe src="https://turbowarp.org/preview?projecturl=data:application/json;base64,{{HIER_STEHT_DEIN_BASE64_PROJECT_JSON}}" title="TurboWarp Preview"></iframe>
+
+<h1>Eis POS Bestellsystem 🍦</h1>
+
+<div class="section">
+  <label for="flavor">Eissorte wählen:</label>
+  <select id="flavor" required>
+    <option value="" disabled selected>-- Bitte wählen --</option>
+    <option value="Stracciatella">Stracciatella</option>
+    <option value="Schokolade">Schokolade</option>
+    <option value="Vanille">Vanille</option>
+    <option value="Erdbeere">Erdbeere</option>
+  </select>
+</div>
+
+<div class="section">
+  <label><input type="checkbox" id="cream" /> Sahne hinzufügen</label>
+</div>
+
+<div class="section">
+  <label>Topping wählen:</label>
+  <label><input type="checkbox" id="waffel" /> Waffel</label>
+  <label><input type="checkbox" id="kirschen" /> Kirschen</label>
+</div>
+
+<button id="orderBtn">Bestellung anzeigen</button>
+
+<div class="section" id="orderSummary"></div>
+
+<script>
+  document.getElementById('orderBtn').addEventListener('click', () => {
+    const flavor = document.getElementById('flavor').value;
+    if (!flavor) {
+      alert('Bitte eine Eissorte auswählen!');
+      return;
+    }
+    const cream = document.getElementById('cream').checked;
+    const waffel = document.getElementById('waffel').checked;
+    const kirschen = document.getElementById('kirschen').checked;
+
+    let orderText = `Deine Bestellung:\n- Eis: ${flavor}`;
+    if (cream) orderText += `\n- Mit Sahne`;
+    
+    let toppings = [];
+    if (waffel) toppings.push('Waffel');
+    if (kirschen) toppings.push('Kirschen');
+    if (toppings.length > 0) orderText += `\n- Topping: ${toppings.join(', ')}`;
+    
+    document.getElementById('orderSummary').textContent = orderText;
+  });
+</script>
+
 </body>
 </html>
